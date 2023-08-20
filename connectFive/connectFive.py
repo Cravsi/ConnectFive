@@ -1,9 +1,12 @@
 from colorama import Fore, Back, Style
 import time
+from connectFive.helpers import validMove
 
 class Game:
     def __init__(self):
-        pass
+        self.turn = 0
+        self.board = []
+        self.gameOver = False
 
     def openingGraphics(self):
         fore = Fore.BLUE
@@ -12,12 +15,14 @@ class Game:
         introGraphic = [
             '-    -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -  -',
             '-----------------------------------------------------------------------------------------',
+            '+                              |  0  0  0  0  0  0  0  |                                +',
             '+                                                                                       +',
             '+                                                                                       +',
             '+                                         CONNECT                                       +',
             '+                                          FIVE                                         +',
             '+                                                                                       +',
             '+                                                                                       +',
+            '+                              |  0  0  0  0  0  0  0  |                                +',
             '-----------------------------------------------------------------------------------------',
             '-    -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -  -'
         ]
@@ -30,15 +35,56 @@ class Game:
         print('New Game, press 1')
         print('Saved Game, print 2 (coming soon):')
         userMenuChoice = input('Your choice:')
+        self.newGame()
 
     def newGame(self):
-        pass
+        self.gameOver = False
+        self.turn = 0
+        self.board = [[0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0]]
+        self.newTurn()
+        
 
     def newTurn(self):
+        self.checkForConnect()
+
+        if self.gameOver == True:
+            self.endGame()
+        else:
+            self.turn += 1
+            player = 0
+            if self.turn % 2 == 0:
+                player = 2
+            else:
+                player = 1
+
+            self.displayBoard(player)
+            playerMove = validMove()
+            print(playerMove)
+            
+
+
+    def endGame(self):
         pass
 
-    def endGam(seld):
+    def checkForConnect(self):
         pass
+
+    def displayBoard(self, player):
+        spacer = '+                                                                                       +'
+        print(spacer)
+        print('+    Turn: ' + str(self.turn))
+        print('+    Player: ' + str(player))
+        print(spacer)
+        for row in self.board:
+            print(f'+                                |  {row[0]}  {row[1]}  {row[2]}  {row[3]}  {row[4]}  {row[5]}  {row[6]}   |                             +')
+        print('+                                   _  _  _  _  _  _  _                                 +')
+        print('+                                   1  2  3  4  5  6  7                                 +')
+        print(spacer)
 
     def run(self):
         self.openingGraphics()
