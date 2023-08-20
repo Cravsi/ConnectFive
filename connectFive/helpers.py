@@ -1,8 +1,23 @@
-def validMove():
-        playerChoice = input('+    Your Move:\t')
+def validMove(player, board):
+        noValidChoice = True
 
-        if playerChoice not in range(1,8,1):
-            print('Please choose a number from the board')
-            validMove()
+        while(noValidChoice):
+            try:
+                playerChoice = int((input(f'+    Your Move Player {player}: ')))
+            except:
+                print('+    Please input a number')
+                continue
+
+            # Check chosen column exists
+            if playerChoice not in range(1,8):
+                print('+    Please choose a number from the board')
+                continue
+
+            # Ensure board can accept move
+            if board[0][playerChoice - 1] != 0:
+                print('+    This column is full, choose again.')
+                continue
+
+            noValidChoice = False
         
         return playerChoice
