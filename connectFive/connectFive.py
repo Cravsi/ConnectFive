@@ -7,6 +7,7 @@ class Game:
         self.turn = 0
         self.board = []
         self.gameOver = False
+        self.results = []
 
     def openingGraphics(self):
         fore = Fore.BLUE
@@ -50,7 +51,7 @@ class Game:
         
 
     def newTurn(self):
-        self.checkForConnect()
+        self.gameOver = self.checkForConnect()
 
         if self.gameOver == True:
             self.endGame()
@@ -62,24 +63,60 @@ class Game:
             else:
                 player = 1
 
-            self.displayBoard(player)
+            self.displayBoard(player, self.board)
             playerMove = validMove(player, self.board)
             self.insertPlayerMove(playerMove, player)
             
 
     def endGame(self):
-        pass
+        print('game over')
+        self.displayBoard(None, self.finalBoard)
 
     def checkForConnect(self):
-        pass
+        width = len(self.board[0])
+        height = len(self.board)
 
-    def displayBoard(self, player):
+        # check vertical
+        for row in range(height - 3):
+            for col in range(width):
+                token = self.board[row][col]
+                if token != 0 and self.board[row + 1][col] == token and self.board[row + 2][col] == token and self.board[row + 3][col] == token:
+                    self.finalBoard(row, col, 'vertical')
+                    return True
+                
+        # check horizontal
+        for row in range(height):
+            for col in range(width - 3):
+                token = self.board[row][col]
+                if token != 0 and self.board[row][col + 1] == token and self.board[row][col + 2] == token and self.board[row][col + 3] == token:
+                    self.finalBoard(row, col, 'horizontal')
+                    return True
+                
+        # Check left diagonal /
+        for row in range(3, height):
+            for col in range(width - 3):
+                token = self.board[row][col]
+                if token != 0 and self.board[row - 1][col + 1] == token and self.board[row - 2][col + 2] == token and self.board[row - 3][col + 3] == token:
+                    self.finalBoard(row, col, 'diagonalRight')
+                    return True
+                
+        # Check right diagonal \
+        for row in range(3, height):
+            for col in range(3, width):
+                token = self.board[row][col]
+                if token != 0 and self.board[row - 1][col - 1] == token and self.board[row - 2][col - 2] == token and self.board[row - 3][col - 3] == token:
+                    self.finalBoard(row, col, 'diagonalLeft')
+                    return True
+
+    def displayBoard(self, player, currentBoard):
         spacer = '+                                                                                       +'
         print(spacer)
-        print('+    Turn: ' + str(self.turn))
-        print('+    Player: ' + str(player))
-        print(spacer)
-        for row in self.board:
+        if player is not None:
+            print('+    Turn: ' + str(self.turn))
+            print('+    Player: ' + str(player))
+            print(spacer)
+
+        for row in currentBoard:
             print(f'+                                |  {row[0]}  {row[1]}  {row[2]}  {row[3]}  {row[4]}  {row[5]}  {row[6]}   |                             +')
         print('+                                   _  _  _  _  _  _  _                                 +')
         print('+                                   1  2  3  4  5  6  7                                 +')
@@ -105,6 +142,26 @@ class Game:
                 placed = True
 
         self.newTurn()    
+
+    def finalBoard(self, row, col, direction):
+        self.finalBoard = self.board
+        match direction:
+            case 'vertical':
+                for i in range(4):
+                    self.finalBoard[row + i][col] = 'X'
+
+            case 'horizontal':
+                for i in range(4):
+                    self.finalBoard[row][col + i] = 'X'
+
+            case 'diagonalRight':
+                for i in range(4):
+                    self.finalBoard[row - i][col + i] = 'X'
+
+            case 'diagonalLeft':
+                for i in range(4):
+                    self.finalBoard[row - i][col - i] = 'X'
+        
 
     def run(self):
         self.openingGraphics()
