@@ -86,7 +86,10 @@ class Game:
         print(spacer)
 
     def insertPlayerMove(self, playerMove, playerToken):
-        for i in  range(len(self.board)):
+        placed = False
+        i = 0
+        while i < len(self.board) and not placed:
+            i += 1
             column = playerMove - 1
             positionAbove = self.board[i - 1][column]
             position = self.board[i][column]
@@ -94,10 +97,12 @@ class Game:
             # First position
             if i == 5 and position == 0:
                 self.board[i][column] = playerToken
+                placed = True
                 
             # all other positions
-            elif position != 0 and positionAbove == 0:
+            elif position != 0:
                 self.board[i - 1][column] = playerToken
+                placed = True
 
         self.newTurn()    
 
