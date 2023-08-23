@@ -69,7 +69,15 @@ class Game:
             
 
     def endGame(self):
-        print('game over')
+        player = ''
+        if self.turn % 2 == 1:
+            player = '1'
+        else:
+            player = '2'
+
+        print('+                                        GAME OVER                                      +')
+        print(f'+                                      Player {player} Wins                                    +')
+        
         self.displayBoard(None, self.finalBoard)
 
     def checkForConnect(self):
