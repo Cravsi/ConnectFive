@@ -1,32 +1,21 @@
 from colorama import Fore, Back, Style
 import time
+import json
 from connectFive.helpers import validMove
-
 class Game:
     def __init__(self):
         self.turn = 0
         self.board = []
         self.gameOver = False
         self.results = []
+        with open('./data/screens.json') as file_object:
+            self.screens_data = json.load(file_object)
 
     def openingGraphics(self):
         fore = Fore.BLUE
         back = Back.WHITE
         reset = Style.RESET_ALL
-        introGraphic = [
-            '-    -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -  -',
-            '-----------------------------------------------------------------------------------------',
-            '+                              |  0  0  0  0  0  0  0  |                                +',
-            '+                                                                                       +',
-            '+                                                                                       +',
-            '+                                         CONNECT                                       +',
-            '+                                          FIVE                                         +',
-            '+                                                                                       +',
-            '+                                                                                       +',
-            '+                              |  0  0  0  0  0  0  0  |                                +',
-            '-----------------------------------------------------------------------------------------',
-            '-    -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -  -'
-        ]
+        introGraphic = self.screens_data.get("intro", [])
         for line in introGraphic:
             print(back + fore + line + reset)
             time.sleep(0.16)
@@ -75,7 +64,8 @@ class Game:
         else:
             player = '2'
 
-        print('+                                        GAME OVER                                      +')
+        gameOverText = self.screens_data["board_peripherals"]["game_over"]
+        print(gameOverText)
         print(f'+                                      Player {player} Wins                                    +')
         
         self.displayBoard(None, self.finalBoard)
@@ -117,7 +107,11 @@ class Game:
                     return True
 
     def displayBoard(self, player, currentBoard):
-        spacer = '+                                                                                       +'
+        boardPeripherals = self.screens_data["board_peripherals"]
+        spacer = boardPeripherals["spacer"]  
+        controlsTop = boardPeripherals["board_controls"]["top"]
+        controlsBot = boardPeripherals["board_controls"]["bot"]
+
         print(spacer)
         if player is not None:
             print('+    Turn: ' + str(self.turn))
@@ -126,8 +120,8 @@ class Game:
 
         for row in currentBoard:
             print(f'+                                |  {row[0]}  {row[1]}  {row[2]}  {row[3]}  {row[4]}  {row[5]}  {row[6]}   |                             +')
-        print('+                                   _  _  _  _  _  _  _                                 +')
-        print('+                                   1  2  3  4  5  6  7                                 +')
+        print(controlsTop)
+        print(controlsBot)
         print(spacer)
 
     def insertPlayerMove(self, playerMove, playerToken):
