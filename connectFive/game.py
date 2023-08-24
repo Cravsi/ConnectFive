@@ -1,5 +1,4 @@
 import json
-from connectFive.helpers import validMove
 
 class Game:
     def __init__(self):
@@ -9,9 +8,6 @@ class Game:
         self.results = []
         with open('./data/game_screens.json') as file_object:
             self.screens_data = json.load(file_object)
-
-    def returnToMenu(self):
-        openMenu()
 
     def newGame(self):
         self.gameOver = False
@@ -39,25 +35,24 @@ class Game:
                 player = 1
 
             self.displayBoard(player, self.board)
-            playerMove = validMove(player, self.board)
+            playerMove = self.validMove(player, self.board)
             if playerMove == 'q':
-                self.endGame(True)
+                exit()
             self.insertPlayerMove(playerMove, player)
             
 
-    def endGame(self, isQuit):
-        if not isQuit:
-            player = ''
-            if self.turn % 2 == 1:
-                player = '1'
-            else:
-                player = '2'
+    def endGame(self):
+        player = ''
+        if self.turn % 2 == 1:
+            player = '1'
+        else:
+            player = '2'
 
-            gameOverText = self.screens_data["board_peripherals"]["game_over"]
-            print(gameOverText)
-            print(f'+                                      Player {player} Wins                                    +')
-            
-            self.displayBoard(None, self.finalBoard)
+        gameOverText = self.screens_data["board_peripherals"]["game_over"]
+        print(gameOverText)
+        print(f'+                                      Player {player} Wins                                    +')
+        
+        self.displayBoard(None, self.finalBoard)
 
     def checkForConnect(self):
         width = len(self.board[0])
@@ -112,6 +107,37 @@ class Game:
         print(controlsTop)
         print(controlsBot)
         print(spacer)
+
+    def validMove(pself, player, board):
+        noValidChoice = True
+        playerChoice = 0
+
+        while(noValidChoice):
+            try:
+                playerInput = input(f'+    Your Move Player {player}: ')
+                
+                if playerInput == 'q':
+                    playerChoice = playerInput
+                else:
+                    playerChoice = int(playerInput)
+
+                    # Check chosen column exists
+                    if playerChoice not in range(1,8):
+                        print('+    Please choose a number from the board: ')
+                        continue
+
+                    # Ensure board can accept move
+                    if board[0][playerChoice - 1] != 0:
+                        print('+    This column is full, choose again.')
+                        continue
+
+            except:
+                print('+    Please input a number')
+                continue
+
+            noValidChoice = False
+        
+        return playerChoice
 
     def insertPlayerMove(self, playerMove, playerToken):
         placed = False
