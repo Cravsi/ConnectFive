@@ -2,6 +2,7 @@ import json
 import time
 from colorama import Fore, Back, Style
 from connectFive.game import Game
+from connectFive.helpers import validateInput
 
 
 screens_data = []
@@ -13,7 +14,22 @@ def openingGraphics():
     printToCLI("intro")
 
 def openMenu():      
-    printToCLI("main_menu")
+    exiting = False
+
+    while not exiting:
+        printToCLI("main_menu")
+        userInput = validateInput('int', '+    Please choose a number from the Menu: ')
+        match userInput:
+            case 1:
+                game = Game()
+                game.run()
+                openMenu()
+            case 2:
+                print('+    Feature currently unavailable.')
+            case 3:
+                print('+    Goodbye!')
+                unselected = True
+                exit()
 
 def printToCLI(component):
     fore = Fore.BLUE
