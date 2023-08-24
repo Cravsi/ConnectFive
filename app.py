@@ -1,4 +1,4 @@
-from connectFive.connectFive import Game
+from connectFive.menu import openMenu, openingGraphics
 
-newGame = Game()
-newGame.run()
+openingGraphics()
+openMenu()

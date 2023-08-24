@@ -1,31 +1,17 @@
-from colorama import Fore, Back, Style
-import time
 import json
 from connectFive.helpers import validMove
+
 class Game:
     def __init__(self):
         self.turn = 0
         self.board = []
         self.gameOver = False
         self.results = []
-        with open('./data/screens.json') as file_object:
+        with open('./data/game_screens.json') as file_object:
             self.screens_data = json.load(file_object)
 
-    def openingGraphics(self):
-        fore = Fore.BLUE
-        back = Back.WHITE
-        reset = Style.RESET_ALL
-        introGraphic = self.screens_data.get("intro", [])
-        for line in introGraphic:
-            print(back + fore + line + reset)
-            time.sleep(0.16)
-
-    def openMenu(self):
-        print('Menu')
-        print('New Game, press 1')
-        print('Saved Game, print 2 (coming soon):')
-        userMenuChoice = input('Your choice:')
-        self.newGame()
+    def returnToMenu(self):
+        openMenu()
 
     def newGame(self):
         self.gameOver = False
@@ -43,7 +29,7 @@ class Game:
         self.gameOver = self.checkForConnect()
 
         if self.gameOver == True:
-            self.endGame()
+            self.endGame(False)
         else:
             self.turn += 1
             player = 0
@@ -54,21 +40,24 @@ class Game:
 
             self.displayBoard(player, self.board)
             playerMove = validMove(player, self.board)
+            if playerMove == 'q':
+                self.endGame(True)
             self.insertPlayerMove(playerMove, player)
             
 
-    def endGame(self):
-        player = ''
-        if self.turn % 2 == 1:
-            player = '1'
-        else:
-            player = '2'
+    def endGame(self, isQuit):
+        if not isQuit:
+            player = ''
+            if self.turn % 2 == 1:
+                player = '1'
+            else:
+                player = '2'
 
-        gameOverText = self.screens_data["board_peripherals"]["game_over"]
-        print(gameOverText)
-        print(f'+                                      Player {player} Wins                                    +')
-        
-        self.displayBoard(None, self.finalBoard)
+            gameOverText = self.screens_data["board_peripherals"]["game_over"]
+            print(gameOverText)
+            print(f'+                                      Player {player} Wins                                    +')
+            
+            self.displayBoard(None, self.finalBoard)
 
     def checkForConnect(self):
         width = len(self.board[0])
@@ -166,5 +155,4 @@ class Game:
         
 
     def run(self):
-        self.openingGraphics()
-        self.openMenu()
+        self.newGame()
