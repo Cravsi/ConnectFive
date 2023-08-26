@@ -21,12 +21,28 @@ def createDatabase():
     try:
         conn = sqlite3.connect(dbFile)
         print('+    No database found. Sqlite3 database created v.' + sqlite3.version)
+        createTable()
 
     except Error as e:
         print(e)
     finally:
         if conn:
             conn.close()
+
+
+def createTable():
+    sqlCommand = """
+        CREATE TABLE [IF NOT EXISTS] savedGames.gameData (
+               game_id  INTEGER PRIMARY KEY,
+            date_saved  TEXT,
+                  turn  INTEGER,
+             save_name  TEXT
+        )
+"""
+    conn = sqlite3.connect(dbFile)
+    cur = conn.cursor()
+    cur.execute(sqlCommand)
+    conn.close()
 
 
 def validateInput(type, prompt):
