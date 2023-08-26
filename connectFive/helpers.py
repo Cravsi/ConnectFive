@@ -1,3 +1,34 @@
+import sqlite3
+from pathlib import Path
+from sqlite3 import Error
+
+dbFile = Path('./db/savedGames.db')
+
+
+def loadGame():
+    pass
+
+
+def saveGame(board):
+    if not dbFile.exists():
+        dbFile.parent.mkdir(parents=True, exist_ok=True)
+        createDatabase()
+
+
+def createDatabase():
+    """ Create an sqlite database connection """
+    conn = None
+    try:
+        conn = sqlite3.connect(dbFile)
+        print('+    No database found. Sqlite3 database created v.' + sqlite3.version)
+
+    except Error as e:
+        print(e)
+    finally:
+        if conn:
+            conn.close()
+
+
 def validateInput(type, prompt):
     validInput = False
     output = 0
@@ -7,7 +38,7 @@ def validateInput(type, prompt):
 
         if userInput == '':
             print('+    Input cannot be blank.')
-            continue 
+            continue
 
         match type:
             case 'int':
@@ -17,7 +48,7 @@ def validateInput(type, prompt):
                 except:
                     print('+    Please input an integer.')
                     continue
-            
+
             case 'bool':
                 if userInput not in ['y', 'Y', 'n', 'Y']:
                     print('+    Please input an Y or N.')
@@ -29,7 +60,7 @@ def validateInput(type, prompt):
                 elif userInput in ['n', 'N']:
                     output = False
                     validInput = True
-                else: 
+                else:
                     print('+    Unknown error, please try again')
                     continue
         return output

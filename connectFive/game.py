@@ -1,4 +1,6 @@
 import json
+from helpers import saveGame
+
 
 class Game:
     def __init__(self):
@@ -12,14 +14,13 @@ class Game:
     def newGame(self):
         self.gameOver = False
         self.turn = 0
-        self.board = [[0,0,0,0,0,0,0],
-                      [0,0,0,0,0,0,0],
-                      [0,0,0,0,0,0,0],
-                      [0,0,0,0,0,0,0],
-                      [0,0,0,0,0,0,0],
-                      [0,0,0,0,0,0,0]]
+        self.board = [[0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0]]
         self.newTurn()
-        
 
     def newTurn(self):
         self.gameOver = self.checkForConnect()
@@ -36,10 +37,17 @@ class Game:
 
             self.displayBoard(player, self.board)
             playerMove = self.validMove(player, self.board)
+
             if playerMove == 'q':
                 exit()
+            elif playerMove == 'save':
+                try:
+                    saveGame(self.board)
+                    print('+    Game saved successfully.')
+                except:
+                    print('+    Could not save game.')
+
             self.insertPlayerMove(playerMove, player)
-            
 
     def endGame(self):
         player = ''
@@ -50,8 +58,9 @@ class Game:
 
         gameOverText = self.screens_data["board_peripherals"]["game_over"]
         print(gameOverText)
-        print(f'+                                      Player {player} Wins                                    +')
-        
+        print(
+            f'+                                      Player {player} Wins                                    +')
+
         self.displayBoard(None, self.finalBoard)
 
     def checkForConnect(self):
@@ -65,7 +74,7 @@ class Game:
                 if token != 0 and self.board[row + 1][col] == token and self.board[row + 2][col] == token and self.board[row + 3][col] == token:
                     self.finalBoard(row, col, 'vertical')
                     return True
-                
+
         # check horizontal
         for row in range(height):
             for col in range(width - 3):
@@ -73,7 +82,7 @@ class Game:
                 if token != 0 and self.board[row][col + 1] == token and self.board[row][col + 2] == token and self.board[row][col + 3] == token:
                     self.finalBoard(row, col, 'horizontal')
                     return True
-                
+
         # Check left diagonal /
         for row in range(3, height):
             for col in range(width - 3):
@@ -81,7 +90,7 @@ class Game:
                 if token != 0 and self.board[row - 1][col + 1] == token and self.board[row - 2][col + 2] == token and self.board[row - 3][col + 3] == token:
                     self.finalBoard(row, col, 'diagonalRight')
                     return True
-                
+
         # Check right diagonal \
         for row in range(3, height):
             for col in range(3, width):
@@ -92,7 +101,7 @@ class Game:
 
     def displayBoard(self, player, currentBoard):
         boardPeripherals = self.screens_data["board_peripherals"]
-        spacer = boardPeripherals["spacer"]  
+        spacer = boardPeripherals["spacer"]
         controlsTop = boardPeripherals["board_controls"]["top"]
         controlsBot = boardPeripherals["board_controls"]["bot"]
 
@@ -103,7 +112,8 @@ class Game:
             print(spacer)
 
         for row in currentBoard:
-            print(f'+                                |  {row[0]}  {row[1]}  {row[2]}  {row[3]}  {row[4]}  {row[5]}  {row[6]}   |                             +')
+            print(
+                f'+                                |  {row[0]}  {row[1]}  {row[2]}  {row[3]}  {row[4]}  {row[5]}  {row[6]}   |                             +')
         print(controlsTop)
         print(controlsBot)
         print(spacer)
@@ -112,17 +122,19 @@ class Game:
         noValidChoice = True
         playerChoice = 0
 
-        while(noValidChoice):
+        while (noValidChoice):
             try:
                 playerInput = input(f'+    Your Move Player {player}: ')
-                
+
                 if playerInput == 'q':
+                    playerChoice = playerInput
+                elif playerInput == 'save':
                     playerChoice = playerInput
                 else:
                     playerChoice = int(playerInput)
 
                     # Check chosen column exists
-                    if playerChoice not in range(1,8):
+                    if playerChoice not in range(1, 8):
                         print('+    Please choose a number from the board: ')
                         continue
 
@@ -136,7 +148,7 @@ class Game:
                 continue
 
             noValidChoice = False
-        
+
         return playerChoice
 
     def insertPlayerMove(self, playerMove, playerToken):
@@ -152,13 +164,13 @@ class Game:
             if i == 5 and position == 0:
                 self.board[i][column] = playerToken
                 placed = True
-                
+
             # all other positions
             elif position != 0:
                 self.board[i - 1][column] = playerToken
                 placed = True
 
-        self.newTurn()    
+        self.newTurn()
 
     def finalBoard(self, row, col, direction):
         self.finalBoard = self.board
@@ -178,7 +190,6 @@ class Game:
             case 'diagonalLeft':
                 for i in range(4):
                     self.finalBoard[row - i][col - i] = 'X'
-        
 
     def run(self):
         self.newGame()
