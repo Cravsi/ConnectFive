@@ -1,6 +1,8 @@
 import sqlite3
+import json
 from pathlib import Path
 from sqlite3 import Error
+from datetime import datetime
 
 dbFile = Path('./db/savedGames.db')
 
@@ -9,10 +11,28 @@ def loadGame():
     pass
 
 
-def saveGame(board):
+def saveGame(board, gameTurn):
     if not dbFile.exists():
         dbFile.parent.mkdir(parents=True, exist_ok=True)
         createDatabase()
+
+    # format data for entry into table
+    board_data = json.dumps(board)
+    timeNow = datetime.now().isoformat()
+
+    sqlCommand = "INSERT INTO savedGames.gameData (game_data, turn, save_date) VALUES (?, ?, ?)"
+    conn = None
+    try:
+        conn = sqlite3.connect(dbFile)
+        cur = conn.cursor()
+        cur.execute(sqlCommand, (board_data, gameTurn, timeNow))
+        conn.commit()
+        print('+    Game saved successfully.')
+    except sqlite3.Error as e:
+        print("Could not save game to database")
+        print(e)
+    finally:
+        conn.close()
 
 
 def createDatabase():
@@ -21,6 +41,7 @@ def createDatabase():
     try:
         conn = sqlite3.connect(dbFile)
         print('+    No database found. Sqlite3 database created v.' + sqlite3.version)
+        conn.close()
         createTable()
 
     except Error as e:
@@ -32,16 +53,18 @@ def createDatabase():
 
 def createTable():
     sqlCommand = """
-        CREATE TABLE [IF NOT EXISTS] savedGames.gameData (
+          CREATE TABLE IF NOT EXISTS gameData (
                game_id  INTEGER PRIMARY KEY,
-            date_saved  TEXT,
+             game_data  TEXT,
                   turn  INTEGER,
              save_name  TEXT
+             save_date  DATE)
         )
-"""
+    """
     conn = sqlite3.connect(dbFile)
     cur = conn.cursor()
     cur.execute(sqlCommand)
+    conn.commit()
     conn.close()
 
 

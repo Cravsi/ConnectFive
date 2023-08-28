@@ -1,5 +1,5 @@
 import json
-from helpers import saveGame
+from connectFive.helpers import saveGame
 
 
 class Game:
@@ -42,12 +42,11 @@ class Game:
                 exit()
             elif playerMove == 'save':
                 try:
-                    saveGame(self.board)
-                    print('+    Game saved successfully.')
+                    saveGame(self.board, self.turn)
                 except:
                     print('+    Could not save game.')
-
-            self.insertPlayerMove(playerMove, player)
+            else:
+                self.insertPlayerMove(playerMove, player)
 
     def endGame(self):
         player = ''
