@@ -8,10 +8,15 @@ dbFile = Path('./db/savedGames.db')
 
 
 def loadGame():
-    pass
+    if not dbFile.exists():
+        print("+    -- No saved games found --")
+
+    saves = getSavedGames()
+    for save in saves:
+        print(save)
 
 
-def saveGame(board, gameTurn):
+def saveGame(board, gameTurn, saveName):
     if not dbFile.exists():
         dbFile.parent.mkdir(parents=True, exist_ok=True)
         createDatabase()
@@ -20,19 +25,42 @@ def saveGame(board, gameTurn):
     board_data = json.dumps(board)
     timeNow = datetime.now().isoformat()
 
-    sqlCommand = "INSERT INTO savedGames.gameData (game_data, turn, save_date) VALUES (?, ?, ?)"
+    sqlCommand = "INSERT INTO gameData (game_data, turn, save_name, save_date) VALUES (?, ?, ?, ?)"
     conn = None
     try:
         conn = sqlite3.connect(dbFile)
         cur = conn.cursor()
-        cur.execute(sqlCommand, (board_data, gameTurn, timeNow))
+        cur.execute(sqlCommand, (board_data, gameTurn, saveName, timeNow))
         conn.commit()
         print('+    Game saved successfully.')
     except sqlite3.Error as e:
-        print("Could not save game to database")
+        print("+    -- Error: Could not save game to database --")
         print(e)
     finally:
-        conn.close()
+        if conn is not None:
+            conn.close()
+
+
+def getSavedGames():
+    sqlCommand = "SELECT game_id, turn, save_name, save_date FROM gameData"
+    savedGames = []
+    conn = None
+    try:
+        conn = sqlite3.connect(dbFile)
+        cur = conn.cursor()
+        cur.execute(sqlCommand)
+        rows = cur.fetchall()
+
+        for row in rows:
+            savedGames.append(row)
+    except sqlite3.Error as e:
+        print("+    -- Error: Could not get saved games --")
+        print(e)
+    finally:
+        if conn is not None:
+            conn.close()
+
+    return savedGames
 
 
 def createDatabase():
@@ -53,14 +81,15 @@ def createDatabase():
 
 def createTable():
     sqlCommand = """
-          CREATE TABLE IF NOT EXISTS gameData (
-               game_id  INTEGER PRIMARY KEY,
-             game_data  TEXT,
-                  turn  INTEGER,
-             save_name  TEXT
-             save_date  DATE)
-        )
+        CREATE TABLE IF NOT EXISTS gameData (
+            game_id  INTEGER PRIMARY KEY,
+            game_data  TEXT,
+                turn  INTEGER,
+            save_name  TEXT,
+            save_date  TEXT
+    )
     """
+    print(sqlCommand)
     conn = sqlite3.connect(dbFile)
     cur = conn.cursor()
     cur.execute(sqlCommand)
@@ -80,6 +109,13 @@ def validateInput(type, prompt):
             continue
 
         match type:
+            case 'string':
+                try:
+                    output = str(userInput)
+                except:
+                    print('+    Please input a string value.')
+                    continue
+
             case 'int':
                 try:
                     output = int(userInput)

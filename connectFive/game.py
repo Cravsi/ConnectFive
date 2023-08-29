@@ -1,5 +1,5 @@
 import json
-from connectFive.helpers import saveGame
+from connectFive.helpers import saveGame, validateInput
 
 
 class Game:
@@ -26,7 +26,7 @@ class Game:
         self.gameOver = self.checkForConnect()
 
         if self.gameOver == True:
-            self.endGame(False)
+            self.endGame()
         else:
             self.turn += 1
             player = 0
@@ -41,8 +41,10 @@ class Game:
             if playerMove == 'q':
                 exit()
             elif playerMove == 'save':
+                saveName = validateInput(
+                    'string', '+    Please name your save: ')
                 try:
-                    saveGame(self.board, self.turn)
+                    saveGame(self.board, self.turn, saveName)
                 except:
                     print('+    Could not save game.')
             else:
