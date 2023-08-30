@@ -1,14 +1,6 @@
 import json
-import time
-from colorama import Fore, Back, Style
 from connectFive.game import Game
-from connectFive.helpers import validateInput, loadGame
-
-
-screens_data = []
-
-with open('./data/menu_screens.json') as file_object:
-    screens_data = json.load(file_object)
+from connectFive.helpers import printToCLI, validateInput, loadGame
 
 
 def openingGraphics():
@@ -29,18 +21,8 @@ def openMenu():
                 openMenu()
             case 2:
                 loadGame()
-                print('+    Feature currently unavailable.')
+
             case 3:
                 print('+    Goodbye!')
                 unselected = True
                 exit()
-
-
-def printToCLI(component):
-    fore = Fore.BLUE
-    back = Back.WHITE
-    reset = Style.RESET_ALL
-    graphic = screens_data.get(component, [])
-    for line in graphic:
-        print(back + fore + line + reset)
-        time.sleep(0.16)

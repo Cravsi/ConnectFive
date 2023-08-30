@@ -1,19 +1,33 @@
 import sqlite3
 import json
+import time
 from pathlib import Path
 from sqlite3 import Error
 from datetime import datetime
+from colorama import Fore, Back, Style
 
 dbFile = Path('./db/savedGames.db')
 
+screens_data = []
+with open('./data/menu_screens.json') as file_object:
+    screens_data = json.load(file_object)
+
 
 def loadGame():
+    saves = []
     if not dbFile.exists():
         print("+    -- No saved games found --")
+    else:
+        saves = getSavedGames()
 
-    saves = getSavedGames()
-    for save in saves:
-        print(save)
+    if saves:
+        printToCLI("load_menu_top")
+        for save in saves:
+            dtObject = datetime.strptime(save[3], "%Y-%m-%dT%H:%M:%S.%f")
+            saveTime = datetime.strftime(dtObject, "%m/%d/%y %I:%M %p")
+            print("+                             {}      {}      {}                     +"
+                  .format(save[2], save[1], saveTime))
+        printToCLI("load_menu_bottom")
 
 
 def saveGame(board, gameTurn, saveName):
@@ -89,7 +103,6 @@ def createTable():
             save_date  TEXT
     )
     """
-    print(sqlCommand)
     conn = sqlite3.connect(dbFile)
     cur = conn.cursor()
     cur.execute(sqlCommand)
@@ -139,3 +152,13 @@ def validateInput(type, prompt):
                     print('+    Unknown error, please try again')
                     continue
         return output
+
+
+def printToCLI(component):
+    fore = Fore.BLUE
+    back = Back.WHITE
+    reset = Style.RESET_ALL
+    graphic = screens_data.get(component, [])
+    for line in graphic:
+        print(back + fore + line + reset)
+        time.sleep(0.16)
