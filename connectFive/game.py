@@ -1,6 +1,7 @@
 import json
-from connectFive.helpers import validateInput
+from connectFive.helpers import validateInput, printStrToCLI
 from connectFive.dataHandler import saveGame
+from colorama import Fore, Back, Style
 
 
 class Game:
@@ -46,13 +47,13 @@ class Game:
 
             if playerMove == 'q':
                 exit()
-            elif playerMove == 'save':
+            elif playerMove == 's':
                 saveName = validateInput(
                     'string', '+    Please name your save: ')
                 try:
                     saveGame(self.board, self.turn, saveName)
                 except:
-                    print('+    Could not save game.')
+                    printStrToCLI('+    Could not save game.')
             else:
                 self.insertPlayerMove(playerMove, player)
 
@@ -64,8 +65,8 @@ class Game:
             player = '2'
 
         gameOverText = self.screens_data["board_peripherals"]["game_over"]
-        print(gameOverText)
-        print(
+        printStrToCLI(gameOverText)
+        printStrToCLI(
             f'+                                      Player {player} Wins                                    +')
 
         self.displayBoard(None, self.finalBoard)
@@ -112,27 +113,35 @@ class Game:
         controlsTop = boardPeripherals["board_controls"]["top"]
         controlsBot = boardPeripherals["board_controls"]["bot"]
 
-        print(spacer)
+        printStrToCLI(spacer)
         if player is not None:
-            print('+    Turn: ' + str(self.turn))
-            print('+    Player: ' + str(player))
-            print(spacer)
+            printStrToCLI(
+                f'+    Turn: {str(self.turn).rjust(2)}                                                                           +')
+            printStrToCLI('+    Player: ' + str(player) +
+                          '                                                                          +')
+            printStrToCLI(spacer)
 
         for row in currentBoard:
-            print(
+            printStrToCLI(
                 f'+                                |  {row[0]}  {row[1]}  {row[2]}  {row[3]}  {row[4]}  {row[5]}  {row[6]}   |                             +')
-        print(controlsTop)
-        print(controlsBot)
-        print(spacer)
+        printStrToCLI(controlsTop)
+        printStrToCLI(controlsBot)
+        printStrToCLI(spacer)
 
     def validMove(pself, player, board):
         noValidChoice = True
         playerChoice = 0
+        printStrToCLI(
+            '+    q = quit, s = save                                                                 +')
 
         while (noValidChoice):
             try:
-                print('+    q = quit, s = save')
-                playerInput = input(f'+    Your Move Player {player}: ')
+                # Needs specific validatation to include 'q' & 's' inputs
+                inputStr = f'+    Your Move Player {player}: '
+                fore = Fore.BLUE
+                back = Back.WHITE
+                reset = Style.RESET_ALL
+                playerInput = input(back + fore + inputStr + reset)
 
                 if playerInput == 'q':
                     playerChoice = playerInput
@@ -143,16 +152,18 @@ class Game:
 
                     # Check chosen column exists
                     if playerChoice not in range(1, 8):
-                        print('+    Please choose a number from the board: ')
+                        printStrToCLI(
+                            '+    Please choose a number from the board: ')
                         continue
 
                     # Ensure board can accept move
                     if board[0][playerChoice - 1] != 0:
-                        print('+    This column is full, choose again.')
+                        printStrToCLI(
+                            '+    This column is full, choose again.')
                         continue
 
             except:
-                print('+    Please input a number')
+                printStrToCLI('+    Please input a number')
                 continue
 
             noValidChoice = False

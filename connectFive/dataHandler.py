@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 from sqlite3 import Error
 from datetime import datetime
-from connectFive.helpers import validateInput, printToCLI
+from connectFive.helpers import validateInput, printCompToCLI, printStrToCLI
 
 dbFile = Path('./db/savedGames.db')
 
@@ -16,23 +16,23 @@ def loadGame():
     from connectFive.game import Game
     saves = []
     if not dbFile.exists():
-        print("+    -- No saved games found --")
+        printStrToCLI("+    -- No saved games found --")
     else:
         saves = getSavedGames()
 
     if saves:
         count = 0
-        printToCLI("load_menu_top")
+        printCompToCLI("load_menu_top")
         for save in saves:
             count += 1
             turn = save[2]
             name = save[3]
             dtObject = datetime.strptime(save[4], "%Y-%m-%dT%H:%M:%S.%f")
             saveTime = datetime.strftime(dtObject, "%m/%d/%y %I:%M %p")
-            print("+                        {}    {}      {}      {}                     +"
-                  .format(count, name, turn, saveTime))
+            printStrToCLI("+                       {:2d}  {}      {:2d}      {}                     +"
+                          .format(count, name.rjust(8), turn, saveTime))
 
-        printToCLI("load_menu_bottom")
+        printCompToCLI("load_menu_bottom")
         userInput = validateInput('int', "+    Please choose a game to load: ")
         try:
             saveChoice = saves[userInput - 1]
@@ -42,7 +42,8 @@ def loadGame():
             loadedGame = Game(boardArray, saveTurn)
             loadedGame.run()
         except:
-            print("+    -- save does not exist --")
+            printStrToCLI(
+                "+    -- save does not exist --                                                          +")
 
 
 def saveGame(board, gameTurn, saveName):
@@ -61,10 +62,10 @@ def saveGame(board, gameTurn, saveName):
         cur = conn.cursor()
         cur.execute(sqlCommand, (board_data, gameTurn, saveName, timeNow))
         conn.commit()
-        print('+    Game saved successfully.')
+        printStrToCLI('+    Game saved successfully.')
     except sqlite3.Error as e:
-        print("+    -- Error: Could not save game to database --")
-        print(e)
+        printStrToCLI("+    -- Error: Could not save game to database --")
+        printStrToCLI(e)
     finally:
         if conn is not None:
             conn.close()
@@ -83,8 +84,8 @@ def getSavedGames():
         for row in rows:
             savedGames.append(row)
     except sqlite3.Error as e:
-        print("+    -- Error: Could not get saved games --")
-        print(e)
+        printStrToCLI("+    -- Error: Could not get saved games --")
+        printStrToCLI(e)
     finally:
         if conn is not None:
             conn.close()
@@ -97,12 +98,13 @@ def createDatabase():
     conn = None
     try:
         conn = sqlite3.connect(dbFile)
-        print('+    No database found. Sqlite3 database created v.' + sqlite3.version)
+        printStrToCLI(
+            '+    No database found. Sqlite3 database created v.' + sqlite3.version)
         conn.close()
         createTable()
 
     except Error as e:
-        print(e)
+        printStrToCLI(e)
     finally:
         if conn:
             conn.close()

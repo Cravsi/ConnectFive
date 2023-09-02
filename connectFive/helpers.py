@@ -3,6 +3,10 @@ import json
 from pathlib import Path
 from colorama import Fore, Back, Style
 
+fore = Fore.BLUE
+back = Back.WHITE
+reset = Style.RESET_ALL
+
 dbFile = Path('./db/savedGames.db')
 
 screens_data = []
@@ -15,10 +19,10 @@ def validateInput(type, prompt):
     output = 0
 
     while not validInput:
-        userInput = input(prompt)
+        userInput = input(back + fore + prompt + reset)
 
         if userInput == '':
-            print('+    Input cannot be blank.')
+            printStrToCLI('+    Input cannot be blank.')
             continue
 
         match type:
@@ -26,7 +30,7 @@ def validateInput(type, prompt):
                 try:
                     output = str(userInput)
                 except:
-                    print('+    Please input a string value.')
+                    printStrToCLI('+    Please input a string value.')
                     continue
 
             case 'int':
@@ -34,12 +38,12 @@ def validateInput(type, prompt):
                     output = int(userInput)
                     validInput = True
                 except:
-                    print('+    Please input an integer.')
+                    printStrToCLI('+    Please input an integer.')
                     continue
 
             case 'bool':
                 if userInput not in ['y', 'Y', 'n', 'Y']:
-                    print('+    Please input an Y or N.')
+                    printStrToCLI('+    Please input an Y or N.')
                     continue
 
                 if userInput in ['y', 'Y']:
@@ -49,16 +53,18 @@ def validateInput(type, prompt):
                     output = False
                     validInput = True
                 else:
-                    print('+    Unknown error, please try again')
+                    printStrToCLI('+    Unknown error, please try again')
                     continue
         return output
 
 
-def printToCLI(component):
-    fore = Fore.BLUE
-    back = Back.WHITE
-    reset = Style.RESET_ALL
+def printCompToCLI(component):
     graphic = screens_data.get(component, [])
     for line in graphic:
         print(back + fore + line + reset)
-        time.sleep(0.16)
+        time.sleep(0.04)
+
+
+def printStrToCLI(string):
+    time.sleep(0.04)
+    print(back + fore + string + reset)

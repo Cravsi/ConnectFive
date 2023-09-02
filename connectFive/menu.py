@@ -1,18 +1,17 @@
-import json
 from connectFive.game import Game
-from connectFive.helpers import printToCLI, validateInput
+from connectFive.helpers import printCompToCLI, validateInput
 from connectFive.dataHandler import loadGame
 
 
 def openingGraphics():
-    printToCLI("intro")
+    printCompToCLI("intro")
 
 
 def openMenu():
     exiting = False
 
     while not exiting:
-        printToCLI("main_menu")
+        printCompToCLI("main_menu")
         userInput = validateInput(
             'int', '+    Please choose a number from the Menu: ')
         match userInput:
