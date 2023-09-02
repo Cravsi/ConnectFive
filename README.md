@@ -41,12 +41,12 @@ The player can exit the game trough the main menu by selecting the third option 
 
 ### Main Menu
 
-![The main menu](readmeImage/mainmenu.jpg)
+![The main menu](readmeImages/mainMenu.jpg)
 
 ### Load Screen
 
-![The load screen](readmeImage/loadMenu.png)
+![The load screen](readmeImages/loadMenu.png)
 
 ### Game Screen
 
-![The game screen](readmeImage/gameScreen.jpg)
+![The game screen](readmeImages/gameScreen.jpg)
