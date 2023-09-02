@@ -27,7 +27,7 @@
     "load_menu_top": [
         "+                                                                                       +",
         "+                                      LOAD GAME                                        +",
-        "+                               Name     Turn           Date                            +"
+        "+                      Save    Name      Turn           Date                            +"
     ],
     "load_menu_bottom": [
         "+                                                                                       +",

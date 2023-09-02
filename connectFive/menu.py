@@ -1,6 +1,7 @@
 import json
 from connectFive.game import Game
-from connectFive.helpers import printToCLI, validateInput, loadGame
+from connectFive.helpers import printToCLI, validateInput
+from connectFive.dataHandler import loadGame
 
 
 def openingGraphics():

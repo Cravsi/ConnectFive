@@ -1,11 +1,17 @@
 import json
-from connectFive.helpers import saveGame, validateInput
+from connectFive.helpers import validateInput
+from connectFive.dataHandler import saveGame
 
 
 class Game:
-    def __init__(self):
-        self.turn = 0
-        self.board = []
+    def __init__(self, board=None, turn=None):
+        if board == None:
+            self.turn = 0
+            self.board = []
+        else:
+            self.turn = turn
+            self.board = board
+
         self.gameOver = False
         self.results = []
         with open('./data/game_screens.json') as file_object:
@@ -125,11 +131,12 @@ class Game:
 
         while (noValidChoice):
             try:
+                print('+    q = quit, s = save')
                 playerInput = input(f'+    Your Move Player {player}: ')
 
                 if playerInput == 'q':
                     playerChoice = playerInput
-                elif playerInput == 'save':
+                elif playerInput == 's':
                     playerChoice = playerInput
                 else:
                     playerChoice = int(playerInput)
@@ -193,4 +200,7 @@ class Game:
                     self.finalBoard[row - i][col - i] = 'X'
 
     def run(self):
-        self.newGame()
+        if self.turn == 0:
+            self.newGame()
+        else:
+            self.newTurn()
