@@ -40,10 +40,11 @@ def loadGame():
             saveTurn = saveChoice[2]
             boardArray = json.loads(boardString)
             loadedGame = Game(boardArray, saveTurn)
-            loadedGame.run()
         except:
             printStrToCLI(
                 "+    -- save does not exist --                                                          +")
+
+        loadedGame.run()
 
 
 def saveGame(board, gameTurn, saveName):
